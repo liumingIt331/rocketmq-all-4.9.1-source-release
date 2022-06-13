@@ -232,7 +232,7 @@ public class BrokerController {
     }
     //Broker初始化过程
     public boolean initialize() throws CloneNotSupportedException {
-        //加载磁盘上的配置信息。
+        //加载磁盘上的配置信息。config目录下的json
         boolean result = this.topicConfigManager.load();
 
         result = result && this.consumerOffsetManager.load();

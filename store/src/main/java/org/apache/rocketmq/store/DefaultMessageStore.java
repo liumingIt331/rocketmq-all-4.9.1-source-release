@@ -287,10 +287,13 @@ public class DefaultMessageStore implements MessageStore {
             this.handleScheduleMessageService(messageStoreConfig.getBrokerRole());
         }
 
+        // ConsumeQueue文件刷盘
         this.flushConsumeQueueService.start();
+        //
         this.commitLog.start();
         this.storeStatsService.start();
 
+        // 创建abort文件   destroy()后有对应的删除abort文件，代表服务是正常关闭的
         this.createTempFile();
         //K2 Broker启动删除过期文件的定时任务
         this.addScheduleTask();
@@ -1475,6 +1478,8 @@ public class DefaultMessageStore implements MessageStore {
         return runningFlags;
     }
     //K2 将commitlog写入的事件转发到ComsumeQueue和IndexFile
+    // CommitLogDispatcherBuildConsumeQueue
+    // CommitLogDispatcherBuildIndex
     public void doDispatch(DispatchRequest req) {
         for (CommitLogDispatcher dispatcher : this.dispatcherList) {
             dispatcher.dispatch(req);
@@ -1787,6 +1792,7 @@ public class DefaultMessageStore implements MessageStore {
         }
     }
 
+    // 对ConsumeQueue文件进行刷盘操作
     class FlushConsumeQueueService extends ServiceThread {
         private static final int RETRY_TIMES_OVER = 3;
         private long lastFlushTimestamp = 0;
@@ -1975,6 +1981,7 @@ public class DefaultMessageStore implements MessageStore {
         public void run() {
             DefaultMessageStore.log.info(this.getServiceName() + " service started");
 
+            // 循环一直处理分发，间隔1毫秒
             while (!this.isStopped()) {
                 try {
                     Thread.sleep(1);

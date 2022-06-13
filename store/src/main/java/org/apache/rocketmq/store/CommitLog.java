@@ -102,6 +102,7 @@ public class CommitLog {
     }
 
     public void start() {
+        // commitLog文件刷盘
         this.flushCommitLogService.start();
 
         if (defaultMessageStore.getMessageStoreConfig().isTransientStorePoolEnable()) {
@@ -1089,6 +1090,7 @@ public class CommitLog {
                 }
             }
 
+            // 服务停止前进行重试刷盘，保证数据不丢失
             // Normal shutdown, to ensure that all the flush before exit
             boolean result = false;
             for (int i = 0; i < RETRY_TIMES_OVER && !result; i++) {

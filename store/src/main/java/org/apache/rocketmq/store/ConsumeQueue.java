@@ -471,6 +471,7 @@ public class ConsumeQueue {
                 }
             }
             this.maxPhysicOffset = offset + size;
+            // 消息顺序写入  append
             return mappedFile.appendMessage(this.byteBufferIndex.array());
         }
         return false;
