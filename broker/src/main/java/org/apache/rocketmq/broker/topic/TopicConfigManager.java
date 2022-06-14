@@ -164,15 +164,20 @@ public class TopicConfigManager extends ConfigManager {
                     topicConfig = this.topicConfigTable.get(topic);
                     if (topicConfig != null)
                         return topicConfig;
-
+                    // 消息发送时设置的requestHeader.setDefaultTopic(this.defaultMQProducer.getCreateTopicKey());
+                    // defaultTopicConfig就是AUTO_CREATE_TOPIC_KEY_TOPIC
                     TopicConfig defaultTopicConfig = this.topicConfigTable.get(defaultTopic);
                     if (defaultTopicConfig != null) {
                         if (defaultTopic.equals(TopicValidator.AUTO_CREATE_TOPIC_KEY_TOPIC)) {
+                            // isAutoCreateTopicEnable!=true
                             if (!this.brokerController.getBrokerConfig().isAutoCreateTopicEnable()) {
+                                // 权限设置成0110-->6    0100 | 0010
                                 defaultTopicConfig.setPerm(PermName.PERM_READ | PermName.PERM_WRITE);
                             }
                         }
 
+                        // 如果isAutoCreateTopicEnable开启  perm=1 0001， 进入下面的创建逻辑
+                        // 如果isAutoCreateTopicEnable未开启  perm=6 0110 不进行创建
                         if (PermName.isInherited(defaultTopicConfig.getPerm())) {
                             topicConfig = new TopicConfig(topic);
 

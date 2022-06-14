@@ -193,6 +193,9 @@ public abstract class AbstractSendMessageProcessor extends AsyncNettyRequestProc
                 }
             }
 
+            // 不存在topic  如果允许自动创建，则试图去创建 TopicConfigManager.createTopicInSendMessageBackMethod，
+            // 否则报错  "topic[" + requestHeader.getTopic() + "] not exist, apply first please!"
+
             log.warn("the topic {} not exist, producer: {}", requestHeader.getTopic(), ctx.channel().remoteAddress());
             topicConfig = this.brokerController.getTopicConfigManager().createTopicInSendMessageMethod(
                 requestHeader.getTopic(),

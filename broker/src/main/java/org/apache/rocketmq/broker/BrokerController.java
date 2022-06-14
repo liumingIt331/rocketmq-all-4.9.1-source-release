@@ -894,6 +894,7 @@ public class BrokerController {
             this.registerBrokerAll(true, false, true);
         }
         //K2 Broker核心的心跳注册任务，需要深入解读下。
+        // broker 和 namesrv之间通过定时上报来维持连接
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
